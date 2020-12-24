@@ -26,7 +26,6 @@ function Canvas() {
         let ctx = canvasRef.current.getContext("2d")
 
         if (e.buttons !== 1) return;
-        console.log(ctx)
         ctx.beginPath(); // begin
         
         ctx.lineWidth = 25;
