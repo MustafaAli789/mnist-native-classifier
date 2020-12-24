@@ -25,12 +25,12 @@ def getPred(pixel_matrix):
     pred = MNIST_classifier.predict(pixel_matrix.reshape(784, 1))
     return np.argmax(pred, 0)
 
-@app.route('/<string:number>')
-def hello(number):
-    return "Hello World!" + number
+@app.route('/')
+def root():
+    return "Hello World!"
 
 @app.route('/api/classify', methods=['POST'])
-def hello2():
+def classify():
     pixel_matrix = np.array(request.json["pixelMatrix"])
     #num_array = scaler.transform(num_array)
     pred = getPred(pixel_matrix).tolist()
