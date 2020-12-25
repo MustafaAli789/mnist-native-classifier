@@ -45,7 +45,7 @@ function App() {
       }
       console.log(pixAlphaData)
 
-      axios.post('http://127.0.0.1:5000/api/classify', {"pixelMatrix": pixAlphaData})
+      axios.post('/api/classify', {"pixelMatrix": pixAlphaData})
         .then(response => {
           alert("The prediction is: " + response.data.pred[0])
           setPreds(response.data.preds)
