@@ -53,10 +53,16 @@ class Layer:
         return self.neurons
 
     def getWeights(self):
-        return self.W;
+        return self.W
+
+    def getBias(self):
+        return self.b
 
     def setWeight(self, weight):
-        self.W = weight;
+        self.W = weight
+
+    def setBias(self, bias):
+        self.b = bias
 
     def feedForward(self, A_prev):
         # ipdb.set_trace()
@@ -164,6 +170,12 @@ class NeuralNet:
     def get_accuracy(self, target, Y, accuracy_buffer):
         return np.sum(abs(target - Y) < accuracy_buffer) / Y.size
 
+    def get_layer_biases(self):
+        biases = []
+        for layer in self.layers:
+            biases.append(layer.getBias())
+        return biases
+
     def get_layer_weights(self):
         weights = []
         for layer in self.layers:
@@ -180,6 +192,16 @@ class NeuralNet:
                     "Num of rows in weights at index " + count + " does not match num of neurons in layer " + count)
         for count, weight in enumerate(weights):
             self.layers[count].setWeight(weight)
+
+    def set_biases(self, biases):
+        if (len(biases) != len(self.layers)):
+            raise ValueError("Num of layers and num of biases must match")
+        for count, bias in enumerate(biases):
+            if (bias.shape[0] != self.layers[count].getNeuronCount()):
+                raise ValueError(
+                    "Num of rows in biases at index " + count + " does not match num of neurons in layer " + count)
+        for count, bias in enumerate(biases):
+            self.layers[count].setBias(bias)
 
     def fit(self, X, y, epochs=None, batch_size=None, learning_rate=None, accuracy_buffer=0.1):
         self.learning_rate = learning_rate if learning_rate != None else self.learning_rate
@@ -246,7 +268,7 @@ class NeuralNet:
                     print("Accuracy:", self.get_accuracy(A, y_curBatch, accuracy_buffer))
                     print("Cost:", batches_cost_sum)
             epoch_costs.append(batches_cost_sum)
-        return epoch_costs, self.get_layer_weights()
+        return epoch_costs, self.get_layer_weights(), self.get_layer_biases()
 
     def predict(self, X):
         A = X

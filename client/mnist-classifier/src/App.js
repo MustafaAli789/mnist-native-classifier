@@ -4,6 +4,7 @@ import { Button } from '@material-ui/core';
 import Grid from '@material-ui/core/Grid';
 import SearchIcon from '@material-ui/icons/Search';
 import './App.css'
+import axios from 'axios'
 import createMixins from '@material-ui/core/styles/createMixins';
 
 function App() {
@@ -30,6 +31,10 @@ function App() {
         pixAlphaData.push(pix[i])
       }
       console.log(pixAlphaData)
+
+      axios.post('http://127.0.0.1:5000/api/classify', {"pixelMatrix": pixAlphaData})
+        .then(response => alert(response.data.pred[0]));
+
     }
     img.setAttribute("src", canvas.toDataURL())
 
