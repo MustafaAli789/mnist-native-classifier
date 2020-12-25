@@ -1,15 +1,21 @@
 
 import Canvas from './Components/Canvas'
+import PredictionBar from './Components/PredictionBar'
 import { Button } from '@material-ui/core';
 import Grid from '@material-ui/core/Grid';
 import SearchIcon from '@material-ui/icons/Search';
 import ClearIcon from '@material-ui/icons/Clear';
 import './App.css'
 import axios from 'axios'
+import { useState } from 'react';
+
+
 import createMixins from '@material-ui/core/styles/createMixins';
 
 function App() {
   let centerStyle = {display: 'flex', alignItems: 'center', justifyContent: 'center'}
+
+  const [preds, setPreds] = useState([[0], [0], [0], [0], [0], [0], [0], [0], [0], [0] ])
 
   const clearCanvas = () => {
     let canvas = document.getElementById("canvas")
@@ -40,21 +46,25 @@ function App() {
       console.log(pixAlphaData)
 
       axios.post('http://127.0.0.1:5000/api/classify', {"pixelMatrix": pixAlphaData})
-        .then(response => alert(response.data.pred[0]));
+        .then(response => {
+          alert("The prediction is: " + response.data.pred[0])
+          setPreds(response.data.preds)
+        });
 
     }
     img.setAttribute("src", canvas.toDataURL())
   }
 
   return (
-    <div>
+    <div style={{ maxWidth: '1000px' }}>
       <Grid container>
         <Grid style={centerStyle} item xs={12}>
           <h1>MNIST Classifier</h1>
         </Grid>
       </Grid>
       <Grid container>
-        <Grid style={{...centerStyle, flexDirection: 'column'}} item xs={12}>
+        <Grid item xs={4}></Grid>
+        <Grid style={{...centerStyle, flexDirection: 'column'}} item xs={4}>
           <Canvas />
           <div style={{flexDirection: 'row', width: '280px'}}>
             <Button
@@ -79,6 +89,18 @@ function App() {
             </Button>
           </div>
           <img id="image" src="" style={{display: "none"}}></img>
+        </Grid>
+        <Grid item xs={4}>
+          <PredictionBar value={preds[0][0]} num={0}/>
+          <PredictionBar value={preds[1][0]} num={1}/>
+          <PredictionBar value={preds[2][0]} num={2}/>
+          <PredictionBar value={preds[3][0]} num={3}/>
+          <PredictionBar value={preds[4][0]} num={4}/>
+          <PredictionBar value={preds[5][0]} num={5}/>
+          <PredictionBar value={preds[6][0]} num={6}/>
+          <PredictionBar value={preds[7][0]} num={7}/>
+          <PredictionBar value={preds[8][0]} num={8}/>
+          <PredictionBar value={preds[9][0]} num={9}/>
         </Grid>
       </Grid>
     </div>

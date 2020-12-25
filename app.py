@@ -40,7 +40,7 @@ MNIST_classifier.set_biases(biases_final)
 
 def getPred(pixel_matrix):
     pred = MNIST_classifier.predict(pixel_matrix)
-    return np.argmax(pred, 0)
+    return np.argmax(pred, 0), pred
 
 @app.route('/api/accuracy')
 def get_test_accuracy():
@@ -60,8 +60,10 @@ def classify():
     outfile = open('random_img', 'wb')
     pickle.dump(pixel_matrix.reshape(784, 1), outfile)
     outfile.close()
-    pred = getPred(pixel_matrix.reshape(784, 1)).tolist()
-    return jsonify({'pred': pred})
+    finalPred, preds = getPred(pixel_matrix.reshape(784, 1))
+    finalPred = finalPred.tolist()
+    preds = preds.tolist()
+    return jsonify({'pred': finalPred, 'preds': preds})
 
 if __name__ == '__main__':
     app.run()
