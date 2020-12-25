@@ -1,3 +1,5 @@
+import os
+
 from flask import Flask, jsonify, request
 from flask_cors import CORS, cross_origin
 from sklearn.preprocessing import StandardScaler
@@ -5,7 +7,7 @@ from NativeAnn import NeuralNet
 import pickle
 import numpy as np
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='client/mnist-classifier/build', static_url_path='/')
 app.config["DEBUG"] = True
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
@@ -48,9 +50,10 @@ def get_test_accuracy():
     test_accuracy = 100*np.sum(test_labels == np.argmax(y_pred, 0), axis=0) / test_images.shape[1]
     return str(test_accuracy)
 
-@app.route('/')
-def root():
-    return "Hello World!"
+@app.route('/', methods=['GET'])
+@cross_origin()
+def index():
+    return app.send_static_file('index.html')
 
 @app.route('/api/classify', methods=['POST'])
 @cross_origin()
@@ -65,5 +68,5 @@ def classify():
     preds = preds.tolist()
     return jsonify({'pred': finalPred, 'preds': preds})
 
-if __name__ == '__main__':
-    app.run()
+if __name__ == "__main__":
+    app.run(host='0.0.0.0', debug=False, port=os.environ.get('PORT', 80))
