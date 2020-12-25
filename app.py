@@ -10,28 +10,27 @@ app.config["DEBUG"] = True
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
-#SETUP -- loading data, scaler and initializing classifier neural net
-infile = open('mnist_weights_final','rb')
+#loading weights
+infile = open('data/mnist_weights','rb')
 weights_batches_final = pickle.load(infile)
 infile.close()
 
-infile = open('mnist_biases_final','rb')
+#loading biases
+infile = open('data/mnist_biases','rb')
 biases_final = pickle.load(infile)
 infile.close()
 
-infile = open('test_images','rb')
+#loading test images
+infile = open('data/test_images','rb')
 test_images = pickle.load(infile)
 infile.close()
 
-infile = open('test_labels','rb')
+#loading test labels
+infile = open('data/test_labels','rb')
 test_labels = pickle.load(infile)
 infile.close()
 
-
-infile = open('scaler','rb')
-scaler = pickle.load(infile)
-infile.close()
-
+#Setting up neural net
 MNIST_classifier = NeuralNet('multi_logloss')
 MNIST_classifier.addLayer(64, 'reLu')
 MNIST_classifier.addLayer(64, 'reLu')
@@ -43,7 +42,7 @@ def getPred(pixel_matrix):
     pred = MNIST_classifier.predict(pixel_matrix)
     return np.argmax(pred, 0)
 
-@app.route('/api/getAcc')
+@app.route('/api/accuracy')
 def get_test_accuracy():
     y_pred = MNIST_classifier.predict(test_images)
     test_accuracy = 100*np.sum(test_labels == np.argmax(y_pred, 0), axis=0) / test_images.shape[1]
